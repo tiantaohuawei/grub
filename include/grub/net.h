@@ -538,4 +538,7 @@ extern char *grub_net_default_server;
 #define GRUB_NET_INTERVAL 400
 #define GRUB_NET_INTERVAL_ADDITION 20
 
+grub_err_t
+grub_net_search_configfile (char *config);
+
 #endif /* ! GRUB_NET_HEADER */
