@@ -1282,6 +1282,7 @@ main (int argc, char *argv[])
       grub_install_push_module ("ahci");
       grub_install_push_module ("ohci");
       grub_install_push_module ("uhci");
+      grub_install_push_module ("ehci");
       grub_install_push_module ("usbms");
     }
   else if (disk_module && disk_module[0])
@@ -1698,7 +1699,7 @@ main (int argc, char *argv[])
 	/*  Now perform the installation.  */
 	if (install_bootsector)
 	  grub_util_sparc_setup (platdir, "boot.img", "core.img",
-				 install_device, force,
+				 install_drive, force,
 				 fs_probe, allow_floppy,
 				 0 /* unused */ );
 	break;
