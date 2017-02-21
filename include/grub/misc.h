@@ -27,6 +27,7 @@
 #include <grub/i18n.h>
 #include <grub/compiler.h>
 
+extern int machineId;
 #define ALIGN_UP(addr, align) \
 	((addr + (typeof (addr)) align - 1) & ~((typeof (addr)) align - 1))
 #define ALIGN_UP_OVERHEAD(addr, align) ((-(addr)) & ((typeof (addr)) (align) - 1))

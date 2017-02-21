@@ -31,6 +31,7 @@
 #include <grub/efi/pe32.h>
 #include <grub/i18n.h>
 #include <grub/lib/cmdline.h>
+#include <grub/misc.h>
 
 GRUB_MOD_LICENSE ("GPLv3+");
 
@@ -45,6 +46,9 @@ static grub_uint32_t cmdline_size;
 
 static grub_addr_t initrd_start;
 static grub_addr_t initrd_end;
+
+#define D03_CONSOLE " console=ttyS0,115200"
+#define D03_CONSOLE_LENGTH (sizeof(D03_CONSOLE)-1)
 
 grub_err_t
 grub_arm64_uefi_check_image (struct grub_arm64_linux_kernel_header * lh)
@@ -297,7 +301,15 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
 
   grub_dprintf ("linux", "kernel @ %p\n", kernel_addr);
 
-  cmdline_size = grub_loader_cmdline_size (argc, argv) + sizeof (LINUX_IMAGE);
+ if (machineId == 0xD03 )
+   {
+     cmdline_size = grub_loader_cmdline_size (argc, argv) + sizeof (LINUX_IMAGE) + D03_CONSOLE_LENGTH;
+   }
+  else
+   {
+     cmdline_size = grub_loader_cmdline_size (argc, argv) + sizeof (LINUX_IMAGE);
+   } 
+ 
   linux_args = grub_malloc (cmdline_size);
   if (!linux_args)
     {
@@ -308,6 +320,17 @@ grub_cmd_linux (grub_command_t cmd __attribute__ ((unused)),
   grub_create_loader_cmdline (argc, argv,
 			      linux_args + sizeof (LINUX_IMAGE) - 1,
 			      cmdline_size);
+
+
+  if (machineId == 0xD03 && !grub_strstr(linux_args,"console"))
+    {
+      grub_size_t cmdline_len = grub_strlen(linux_args);
+      if (cmdline_len + D03_CONSOLE_LENGTH  > cmdline_size)
+         return grub_errno;
+      grub_memcpy(linux_args + cmdline_len,D03_CONSOLE,D03_CONSOLE_LENGTH);
+      cmdline_len += D03_CONSOLE_LENGTH;
+      linux_args[cmdline_len] = '\0';
+    }
 
   if (grub_errno == GRUB_ERR_NONE)
     {

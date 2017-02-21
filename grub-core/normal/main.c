@@ -39,6 +39,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
 
 #define GRUB_DEFAULT_HISTORY_SIZE	50
 
+int machineId = 0;
 static int nested_level = 0;
 int grub_normal_exit_level = 0;
 
@@ -262,6 +263,19 @@ grub_normal_execute (const char *config, int nested, int batch)
 {
   grub_menu_t menu = 0;
   const char *prefix;
+  char *openstr="smbios --type 0 --get-string 5 --set opengrub";
+  grub_script_execute_sourcecode(openstr);
+  const char *openplatform= grub_env_get ("opengrub");
+
+  if (openplatform)
+    { 
+      char *D03 = "D03";
+      char *s1 = grub_strstr(openplatform,D03);
+       if (s1)
+         {
+           machineId = 0xD03;
+         } 
+    }
 
   if (! nested)
     {
