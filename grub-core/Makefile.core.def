@@ -1014,6 +1014,13 @@ module = {
 };
 
 module = {
+   name = smbios;
+   common = commands/smbios.c;
+   efi = commands/efi/smbios.c;
+   enable = efi;
+};
+
+module = {
   name = suspend;
   ieee1275 = commands/ieee1275/suspend.c;
   enable = i386_ieee1275;
